@@ -1,14 +1,13 @@
-July 07 th 2019
+10th September 2020
 
 
 	Volsimpleequal volumio simple equalizer
 
-# A simple 10 bands graphic Equalizer plugin for Volumio2.
-
-#WARNING !!! I reverted to alsaequal, waiting for a fix for the frying sound with mbeq
+# A simple 15 bands graphic Equalizer plugin for Volumio2 with preset and 3 cutom preset.
 
 
-Based on alsaequal https://github.com/raedwulf/alsaequal
+Based on alsaequal [alsaequal](https://github.com/raedwulf/alsaequal)
+and mbeq from [mbeq](https://github.com/swh/ladspa)
 
 ![Alt text](volsimpleequal.png?raw=true "Equalizer")
 
@@ -51,11 +50,13 @@ In volumio webUI, go in plugin section and enable it!
 
  May not work with some source / output.
 
- Equalizer appears on several lines
- 
- It still a beta version, need feedback !
 
 ## Last changes
+
+September 11th 2020
+
+- 15 band using mbeq
+- new layout for mypreset
 
 7thh July 19
 
