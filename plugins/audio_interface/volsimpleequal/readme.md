@@ -36,6 +36,7 @@ mkdir ./volsimpleequal
 miniunzip volsimpleequal.zip -d ./volsimpleequal
 cd ./volsimpleequal
 volumio plugin install
+rm -Rf volsimpleequal*
 ```
 If the installation fails, remove all file (if any) related to the plugin before retry.
 
