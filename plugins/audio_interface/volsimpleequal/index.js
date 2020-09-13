@@ -187,7 +187,7 @@ ControllerVolsimpleequal.prototype.sendequal = function (scoef) {
     x = k + z;
 
     console.log("/bin/echo /usr/bin/amixer -D equal1 cset numid=" + [i] + " " + x)
-    exec("/usr/bin/amixer -D equal cset numid=" + [i] + " " + x, {
+    exec("/usr/bin/amixer -D equal1 cset numid=" + [i] + " " + x, {
       uid: 1000,
       gid: 1000
     }, function (error, stdout, stderr) {

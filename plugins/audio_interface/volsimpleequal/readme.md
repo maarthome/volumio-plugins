@@ -1,4 +1,4 @@
-10th September 2020
+13th September 2020
 
 
 	Volsimpleequal volumio simple equalizer
@@ -52,6 +52,12 @@ In volumio webUI, go in plugin section and enable it!
 
 
 ## Last changes
+
+September 13th 2020
+
+- fix Allo Boss
+- Preset adjustement
+- correct version number
 
 September 11th 2020
 
