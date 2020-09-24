@@ -1,4 +1,4 @@
-13th September 2020
+24th September 2020
 
 
 	Volsimpleequal volumio simple equalizer
@@ -53,6 +53,10 @@ In volumio webUI, go in plugin section and enable it!
 
 
 ## Last changes
+
+September 24th 2020
+
+- possible fixes for no sound or frying sound
 
 September 13th 2020
 

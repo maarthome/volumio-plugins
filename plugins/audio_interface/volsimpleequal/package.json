@@ -1,6 +1,6 @@
 {
 	"name": "volsimpleequal",
-	"version": "0.5.6",
+	"version": "0.5.7",
 	"description": "Provides a 15 bands equalizer",
 	"main": "index.js",
 	"scripts": {
