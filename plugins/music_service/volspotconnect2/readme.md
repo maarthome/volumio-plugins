@@ -62,6 +62,7 @@ A delay, somtimes up to 10sec after play is pressed, before the sound comes...
 ## Last changes
 
 October 7th 2020
+
 new vollibrespot ['@ash'](https://github.com/ashthespy) 
 - Fix Android/iOS track skipping display issues
 - Set an explicit period size to reduce CUP load
