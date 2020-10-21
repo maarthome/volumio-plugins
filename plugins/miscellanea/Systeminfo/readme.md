@@ -1,4 +1,5 @@
-2020 March 22th
+
+2020 October 21th
 
 ###  About the plugin
 
@@ -22,6 +23,10 @@ volumio plugin install
 cd ..
 rm -Rf Systeminfo*
 ```
+October 21st 2020
+
+- close modals on all screen
+
 March 22th 2020
 
 - code cleaning
