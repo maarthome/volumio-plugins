@@ -33,6 +33,7 @@ mkdir -m 777 $opath/filter-sources
 mkdir -m 777 $opath/target-curves
 echo "copying demo flters"
 cp $spath/mpdignore $opath/.mpdignore
+cp $spath/readme.txt $opath/readme.txt
 cp $spath/filters/* $opath/filters/
 cp $spath/VoBAFfilters/* $opath/VoBAFfilters
 cp $spath/target-curves/* $opath/target-curves/
