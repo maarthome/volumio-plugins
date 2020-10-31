@@ -1,4 +1,4 @@
-October 20th 2020
+October 31th 2020
 
 
 ##  Need at least Volumio 2.776 or May not work!
@@ -125,13 +125,17 @@ nearly everythings
 
 ### 4. Last changes
 
+October 21th 2020
+
+- warning if impulse file contains a space
+
 October 27th 2020
 
-    Warning when space in filter name
-    fix for swap filters
-    attenutation +1dB if > 0
-    sample rate always shown
-    close modals on all screen
+- Warning when space in filter name
+- fix for swap filters
+- attenutation +1dB if > 0
+- sample rate always shown
+- close modals on all screen
 
 
 August 4th 2020

@@ -783,7 +783,7 @@ ControllerBrutefir.prototype.hwinfo = function () {
 
   let output_device = this.getAdditionalConf('audio_interface', 'alsa_controller', 'outputdevice');
   if (output_device != 'softvolume') {
-       output_device = 'hw:' + output_device
+    output_device = 'hw:' + output_device
   }
   //let output_device = self.config.get('alsa_device');
   let nchannels;
@@ -1166,10 +1166,8 @@ ControllerBrutefir.prototype.testclipping = function () {
       let leftAttSet = 0;
       let rightAttSet = 0;
       let corr = 0.49;
-      let leftSuggestedb = Math.round(Number(firstPeak) + Number(leftAttSet) + corr);
-      let leftSuggested = leftSuggestedb + 1;
-      let rightSuggestedb = Math.round(Number(secondPeak) + Number(rightAttSet) + corr);
-      let rightSuggested = rightSuggestedb + 1;
+      let leftSuggested = Math.round(Number(firstPeak) + Number(leftAttSet) + corr);
+      let rightSuggested = Math.round(Number(secondPeak) + Number(rightAttSet) + corr);
       if (leftSuggested > rightSuggested) {
         messageDisplayed = leftSuggested
       } else {
@@ -2768,6 +2766,13 @@ ControllerBrutefir.prototype.convert = function (data) {
   let drcconfig = self.config.get('drcconfig');
   // let filterfolder = "/data/INTERNAL/brutefirfilters/";
   let infile = self.config.get('filetoconvert');
+
+  if (infile.includes(' ')) {
+    self.commandRouter.pushToastMessage('error', 'Impulse :' + self.commandRouter.getI18nString('WARN_SPACE_INFILTER'));
+    self.logger.error('SPACE NOT ALLOWED in file name')
+    return;
+  };
+
   if (infile != 'choose a file') {
 
     let outfile = self.config.get('outputfilename')//.replace(/ /g, '-');
