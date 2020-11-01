@@ -1165,7 +1165,7 @@ ControllerBrutefir.prototype.testclipping = function () {
       firstPeak = filteredMessage.slice(posFirstSlash + 2, posFirstSlash + 6);
       let leftAttSet = 0;
       let rightAttSet = 0;
-      let corr = 0.49;
+      let corr = 1.99;
       let leftSuggested = Math.round(Number(firstPeak) + Number(leftAttSet) + corr);
       let rightSuggested = Math.round(Number(secondPeak) + Number(rightAttSet) + corr);
       if (leftSuggested > rightSuggested) {

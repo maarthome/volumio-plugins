@@ -1,4 +1,4 @@
-October 31th 2020
+November 1st 2020
 
 
 ##  Need at least Volumio 2.776 or May not work!
@@ -125,7 +125,12 @@ nearly everythings
 
 ### 4. Last changes
 
-October 21th 2020
+November 1st 2020
+
+- better message for clipping detection with warning
+- attenuation auto + 1,5dB
+
+October 31th 2020
 
 - warning if impulse file contains a space
 
