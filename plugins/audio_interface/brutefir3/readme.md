@@ -1,4 +1,4 @@
-November 1st 2020
+November 29th 2020
 
 
 ##  Need at least Volumio 2.776 or May not work!
@@ -124,6 +124,10 @@ nearly everythings
 
 
 ### 4. Last changes
+
+November 29th 2020
+
+- support for filter length 524288
 
 November 1st 2020
 
