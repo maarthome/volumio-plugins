@@ -20,12 +20,12 @@ const SpotConnCtrl = require('./SpotConnController').SpotConnEvents;
 const msgMap = require('./SpotConnController').msgMap;
 const logger = require('./logger');
 // Global
-var seekTimer;
+let seekTimer;
 
 // Define the ControllerVolspotconnect class
 module.exports = ControllerVolspotconnect;
 
-function ControllerVolspotconnect (context) {
+function ControllerVolspotconnect(context) {
   // Save a reference to the parent commandRouter
   this.context = context;
   this.commandRouter = this.context.coreCommand;
@@ -73,7 +73,9 @@ ControllerVolspotconnect.prototype.VolspotconnectServiceCmds = async function (c
   const { stdout, stderr } = await exec(`/usr/bin/sudo /bin/systemctl ${cmd} volspotconnect2.service`, { uid: 1000, gid: 1000 });
   if (stderr) {
     logger.error(`Unable to ${cmd} Daemon: `, stderr);
-  } else if (stdout) {}
+  } else if (stdout) {
+    // logger.debug(stdout);
+  }
   logger.info(`Vollibrespot Daemon service ${cmd}ed!`);
 };
 
@@ -123,7 +125,7 @@ ControllerVolspotconnect.prototype.volspotconnectDaemonConnect = function (defer
   });
 
   this.SpotConn.on(this.Events.DeviceActive, (data) => {
-  // A Spotify Connect session has been initiated
+    // A Spotify Connect session has been initiated
     logger.evnt('<DeviceActive> A connect session has begun');
     this.commandRouter.pushToastMessage('info', 'Spotify Connect', 'Session is active!');
     // Do not stop Volumio playback, just notify
@@ -135,9 +137,9 @@ ControllerVolspotconnect.prototype.volspotconnectDaemonConnect = function (defer
   });
 
   this.SpotConn.on(this.Events.PlaybackActive, (data) => {
-  // SpotConn is active playback device
-  // This is different from SinkActive, it will be triggered at the beginning
-  // of a playback session (e.g. Playlist) while the track loads
+    // SpotConn is active playback device
+    // This is different from SinkActive, it will be triggered at the beginning
+    // of a playback session (e.g. Playlist) while the track loads
     logger.evnt('<PlaybackActive> Device palyback is active!');
     this.commandRouter.pushToastMessage('info', 'Spotify Connect', 'Connect is active');
     this.volumioStop().then(() => {
@@ -173,7 +175,7 @@ ControllerVolspotconnect.prototype.volspotconnectDaemonConnect = function (defer
   });
 
   this.SpotConn.on(this.Events.SinkInactive, (data) => {
-  // Alsa sink has been closed
+    // Alsa sink has been closed
     logger.evnt('<SinkInactive> Sink released');
     this.SinkActive = false;
     clearInterval(seekTimer);
@@ -270,7 +272,7 @@ ControllerVolspotconnect.prototype.checkActive = async function () {
       return false;
     }
   } else {
-    logger.warn('No active spotify devices found');
+    logger.warn('No active Spotify devices found');
     logger.debug('Devices: ', res.body);
     return false;
   }
@@ -316,7 +318,8 @@ ControllerVolspotconnect.prototype.DeactivateState = async function () {
     // Some silly race contions again. This should really be refactored!
     // logger.debug(`self.SinkActive  ${self.SinkActive} || self.DeviceActive ${self.DeviceActive}`);
     if (this.SinkActive || this.DeviceActive) {
-      this.device === undefined ? logger.info('Relinquishing Volumio State')
+      this.device === undefined
+        ? logger.info('Relinquishing Volumio State')
         : logger.warn(`Relinquishing Volumio state, Spotify session: ${this.device.is_active}`);
       this.context.coreCommand.stateMachine.unSetVolatile();
       this.context.coreCommand.stateMachine.resetVolumioState().then(() => {
@@ -329,8 +332,9 @@ ControllerVolspotconnect.prototype.DeactivateState = async function () {
 };
 
 ControllerVolspotconnect.prototype.spotConnUnsetVolatile = function () {
-  // FIXME: use a differnt check
-  this.device === undefined ? logger.info('Relinquishing Volumio State to another service')
+  // FIXME: use a different check
+  this.device === undefined
+    ? logger.info('Relinquishing Volumio State to another service')
     : logger.warn(`Relinquishing Volumio state to another service, Spotify session: ${this.device.is_active}`);
 
   return this.stop();
@@ -425,7 +429,7 @@ ControllerVolspotconnect.prototype.onUninstall = function () {
 };
 
 ControllerVolspotconnect.prototype.getUIConfig = function () {
-  var defer = libQ.defer();
+  const defer = libQ.defer();
   const langCode = this.commandRouter.sharedVars.get('language_code');
   this.commandRouter.i18nJson(path.join(__dirname, `/i18n/strings_${langCode}.json`),
     path.join(__dirname, '/i18n/strings_en.json'),
@@ -466,8 +470,8 @@ ControllerVolspotconnect.prototype.getUIConfig = function () {
 };
 
 ControllerVolspotconnect.prototype.getLabelForSelect = function (options, key) {
-  var n = options.length;
-  for (var i = 0; i < n; i++) {
+  const n = options.length;
+  for (let i = 0; i < n; i++) {
     if (options[i].value === key) { return options[i].label; }
   }
 
@@ -509,19 +513,27 @@ ControllerVolspotconnect.prototype.createConfigFile = async function () {
     if (volumestart !== 'disabled') {
       initvol = volumestart;
     } else {
-      // This will fail now - as stateMachine might not (yet) be up and running
-      // TODO: Make these calls awaitable.
-      // const state = this.commandRouter.volumioGetState();
-      // if (state) {
-      //   initvol = (`${state.volume}`);
-      // }
+      // This will fail on first start - as stateMachine might not (yet) be up and running to write this value
+      const curvol = fs.readFileSync('/tmp/volume').toString();
+      if (curvol) {
+        initvol = curvol;
+      }
     }
     const devicename = this.commandRouter.sharedVars.get('system.name');
-    const outdev = this.commandRouter.sharedVars.get('alsa.outputdevice');
-    const volcuve = this.commandRouter.executeOnPlugin('audio_interface', 'alsa_controller', 'getConfigParam', 'volumecurvemode');
+    const outdev = this.commandRouter.sharedVars.get('alsa.outputdevice'); // The ALSA device (or the volumio `copy` plugin)
+    const outputdevicemixer = this.getAdditionalConf('audio_interface', 'alsa_controller', 'outputdevice'); // Underlying hw device
+    const volcurve = this.getAdditionalConf('audio_interface', 'alsa_controller', 'volumecurvemode');
+    const mixtype = this.getAdditionalConf('audio_interface', 'alsa_controller', 'mixer_type');
     let mixname = this.commandRouter.sharedVars.get('alsa.outputdevicemixer');
+    logger.debug(`Volumio alsa_controller configuration:
+    outdev:${outdev}
+    outputdevicemixer:${outputdevicemixer}
+    volcurve:${volcurve}
+    mixtype:${mixtype}
+    mixname:${mixname}
+    `);
     /* eslint-disable one-var */
-    // Default values will be parsed as neccesary by the backend for these
+    // Default values will be parsed as necessary by the backend for these
     let idxcard = '',
       hwdev = '',
       mixer = '',
@@ -530,19 +542,20 @@ ControllerVolspotconnect.prototype.createConfigFile = async function () {
       initvolstr = '',
       mixidx = 0;
     /* eslint-enable one-var */
+    logger.debug(`MODULAR_ALSA_PIPELINE: ${process.env.MODULAR_ALSA_PIPELINE}`);
     let mixlin = false;
-    if ((mixname === '') || (mixname === 'None')) {
+    if ((mixtype === '') || (mixtype === 'None')) {
       logger.debug('<> or <None> Mixer found, using softvol');
       // No mixer - default to (linear) Spotify volume
       mixer = 'softvol';
       mixeropts = this.config.get('volume_ctrl');
       hwdev = `plughw:${outdev}`;
       initvolstr = this.config.get('initvol');
-    } else {
-      // Some mixer is defined, set inital volume to startup volume or current volume
+    } else { // (mixtype === 'Hardware')
+      // Some mixer is defined, set initial volume to start-up volume or current volume
       mixer = 'alsa';
       initvolstr = initvol;
-      if (volcuve !== 'logarithmic') {
+      if (volcurve !== 'logarithmic') {
         mixlin = true;
       }
       if (outdev === 'softvolume') {
@@ -564,7 +577,7 @@ ControllerVolspotconnect.prototype.createConfigFile = async function () {
         hwdev = `plughw:${outdev}`;
         // outputdevice = card,device..
         // ¯\_(ツ)_/¯
-        idxcard = outdev.split(',')[0];
+        idxcard = outputdevicemixer.split(',')[0];
         // Similar storey with mixer,index
         [mixname, mixidx] = mixname.split(',');
         mixidx = mixidx || 0;
@@ -573,10 +586,26 @@ ControllerVolspotconnect.prototype.createConfigFile = async function () {
       mixdev = `hw:${idxcard}`;
       mixeropts = 'linear';
     }
+    // Modular pipline doesn't need `plughw:`
+    hwdev = process.env.MODULAR_ALSA_PIPELINE === 'true' ? hwdev.replace('plughw:', '') : hwdev;
+
     if (this.config.get('debug')) {
       // TODO:
       logger.debug('Unimplemented debug mode!!');
     }
+
+    if (!Number.parseInt(initvolstr)) {
+      logger.error('Unable to parse initial volume string: ', initvolstr);
+      initvolstr = 0;
+    }
+
+    logger.debug(`
+    outdev:${hwdev}
+    mixer:${mixer}
+    mixname:${mixname}
+    mixdev:${mixdev}
+    mixidx:${mixidx}
+    `);
     template = await template;
     /* eslint-disable no-template-curly-in-string */
     const conf = template.replace('${shared}', shared)
@@ -595,7 +624,7 @@ ControllerVolspotconnect.prototype.createConfigFile = async function () {
       .replace('${autoplay}', this.config.get('autoplay'))
       .replace('${gapless}', this.config.get('gapless'))
       .replace('${bitrate}', this.config.get('bitrate'));
-      /* eslint-enable no-template-curly-in-string */
+    /* eslint-enable no-template-curly-in-string */
 
     // Sanity check
     if (conf.indexOf('undefined') > 1) {
@@ -604,7 +633,7 @@ ControllerVolspotconnect.prototype.createConfigFile = async function () {
       const trouble = conf.match(/^.*\b(undefined)\b.*$/gm);
       logger.error('volspotify config error: ', trouble);
       this.commandRouter.pushToastMessage('stickyerror', 'Spotify Connect', `Error reading config: ${trouble}`);
-      throw Error('Undefined found found in conf');
+      throw Error('Undefined found in conf');
     }
     return writeFile('/data/plugins/music_service/volspotconnect2/volspotify.toml', conf);
   } catch (e) {
@@ -616,7 +645,7 @@ ControllerVolspotconnect.prototype.createConfigFile = async function () {
 ControllerVolspotconnect.prototype.saveVolspotconnectAccount = function (data) {
   // TODO: is this still requred?
   // Does UIConfig - onSave() actually resolve this promise?
-  var defer = libQ.defer();
+  const defer = libQ.defer();
 
   this.config.set('initvol', data.initvol);
   this.config.set('bitrate', data.bitrate.value);
