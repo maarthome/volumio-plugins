@@ -31,7 +31,6 @@
 		"semistandard": "14.2.0"
 	},
 	"engines": {
-		"node": ">=8",
-		"volumio": ">=2"
+		"node": ">=8"
 	}
 }
